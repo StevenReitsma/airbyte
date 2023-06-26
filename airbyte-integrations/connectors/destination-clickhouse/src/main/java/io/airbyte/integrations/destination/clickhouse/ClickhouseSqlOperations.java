@@ -67,9 +67,7 @@ public class ClickhouseSqlOperations extends JdbcSqlOperations {
     query.append(" ( \n"
         + "${col_name_ab_id} String,\n"
         + "${col_name_data} String,\n"
-        + "${col_name_emitted_at} DateTime64(3, 'GMT') DEFAULT now(),\n"
-        + "PRIMARY KEY(${col_name_ab_id})\n"
-        + ")\n"
+        + "${col_name_emitted_at} DateTime64(3, 'GMT') DEFAULT now())\n"
         + "ENGINE = ");
 
     if (config.deploy_config().replication()) {
@@ -80,7 +78,12 @@ public class ClickhouseSqlOperations extends JdbcSqlOperations {
     if (config.deploy_config().type().equals("self-hosted-cluster")) {
       query.append("'/clickhouse/tables/{shard}/{database}/{table}', '{replica}'");
     }
-    query.append(");\n");
+    query.append(") ORDER BY ${col_name_data}\n");
+
+    if (config.ttl_days() > 0) {
+      query.append("TTL toDateTime(${col_name_emitted_at}) + INTERVAL ${ttl_days} DAY DELETE");
+    }
+    query.append(";\n");
 
     // On a self-hosted cluster, we now create the Distributed virtual table,
     // sharding on a hashed Airbyte record ID
@@ -97,6 +100,7 @@ public class ClickhouseSqlOperations extends JdbcSqlOperations {
     params.put("col_name_ab_id", JavaBaseConstants.COLUMN_NAME_AB_ID);
     params.put("col_name_data", JavaBaseConstants.COLUMN_NAME_DATA);
     params.put("col_name_emitted_at", JavaBaseConstants.COLUMN_NAME_EMITTED_AT);
+    params.put("ttl_days", config.ttl_days().toString());
 
     return StringSubstitutor.replace(query, params);
   }

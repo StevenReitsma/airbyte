@@ -126,11 +126,20 @@
           "VersionedCollapsingMergeTree"
         ]
       },
+      "ttl_days": {
+        "title": "TTL days",
+        "description": "Number of days for data to be persisted in the table. Data that was ingested longer than X days ago will be automatically deleted from the table. Use 0 for no TTL (i.e. no deletes). See the <a href=\"https://clickhouse.com/docs/en/guides/developer/ttl\">documentation</a> for more information.",
+        "type": "integer",
+        "minimum": 0,
+        "default": 0,
+        "examples": ["365"],
+        "order": 9
+      },
       "deploy_type": {
         "title": "Deployment type",
         "description": "Select the type of Clickhouse installation that you use.",
         "type": "object",
-        "order": 9,
+        "order": 10,
         "oneOf": [
           {
             "title": "clickhouse-cloud",

@@ -41,6 +41,7 @@ public class ClickhouseDestinationSpecTest {
       + "  \"mode\": \"none\""
       + "},"
       + "\"engine\" : \"MergeTree\", "
+      + "\"ttl_days\" : 0, "
       + "\"deploy_type\" : {"
       + "  \"deploy_type\": \"clickhouse-cloud\""
       + "}"
