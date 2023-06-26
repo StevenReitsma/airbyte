@@ -81,7 +81,7 @@ public class ClickhouseSqlOperations extends JdbcSqlOperations {
     query.append(") ORDER BY ${col_name_data}\n");
 
     if (config.ttl_days() > 0) {
-      query.append("TTL toDateTime(${col_name_emitted_at}) + INTERVAL ${ttl_days} DAY DELETE");
+      query.append("TTL toDateTime(${col_name_emitted_at}) + INTERVAL ${ttl_days} DAY");
     }
     query.append(";\n");
 
